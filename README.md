@@ -11,6 +11,14 @@ Installed successfully.
 -Device: CPU
 - This system does not have an NVIDIA CUDA-enabled GPU, so PyTorch is running on the CPU.
 
+
+## PyTorch Verification
+
+torch.cuda.is_available(): False
+
+Device: CPU
+
+
 ## Folder Structure
 - data/raw
 - data/processed
