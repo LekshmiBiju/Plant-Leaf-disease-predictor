@@ -18,6 +18,24 @@ torch.cuda.is_available(): False
 
 Device: CPU
 
+## Dataset Summary
+
+Early Blight: 1000 images
+
+Healthy: 1000 images
+
+Late Blight: 999 images
+
+Leaf Mold: 1000 images
+
+## Batch Information
+
+Batch Shape:
+Images: (8, 3, 224, 224)
+
+Labels: (8)
+
+A sample batch visualization has been generated and saved as sample_batch.png.
 
 ## Folder Structure
 - data/raw
