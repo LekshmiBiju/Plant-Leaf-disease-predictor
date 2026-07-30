@@ -1,0 +1,30 @@
+LeafDiseaseCNN Architecture
+
+Input:
+3 × 224 × 224
+
+Feature Extractor:
+Conv2D(3 → 32)
+ReLU
+MaxPool2D
+
+Conv2D(32 → 64)
+ReLU
+MaxPool2D
+
+Conv2D(64 → 128)
+ReLU
+MaxPool2D
+
+Conv2D(128 → 256)
+ReLU
+
+AdaptiveAvgPool2D(1×1)
+
+Classifier:
+Flatten
+Dropout(0.3)
+Linear(256 → 4)
+
+Output:
+4 classes
