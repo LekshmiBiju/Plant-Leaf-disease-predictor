@@ -34,10 +34,10 @@ class LeafDiseaseDataset(Dataset):
         if self.transform:
             image = self.transform(image)
         return image, label
-if __name__=="__main__":
-    
- train_ds = LeafDiseaseDataset("data/train", transform=transform)
- train_loader = DataLoader(train_ds, batch_size=32, shuffle=True, num_workers=2, pin_memory=True)
 
- images, labels = next(iter(train_loader))
- print(images.shape, labels[:5])  # torch.Size([32, 3, 224, 224])
+    
+train_ds = LeafDiseaseDataset("data/train", transform=transform)
+train_loader = DataLoader(train_ds, batch_size=32, shuffle=True, num_workers=0,)
+
+
+ # torch.Size([32, 3, 224, 224])
