@@ -43,3 +43,16 @@ A sample batch visualization has been generated and saved as sample_batch.png.
 - models
 - notebooks
 - src
+
+## Validation and Early Stopping
+
+The CNN was trained using an 80/20 train-validation split.
+
+- Training images: 3200
+- Validation images: 800
+- Device: CPU
+- Early stopping patience: 3 epochs
+- Epochs completed: 31
+- Best validation accuracy: 0.9400
+- Best model: `models/leaf_cnn_best.pth`
+- Training curves: `reports/training_curves.png`
