@@ -1,0 +1,20 @@
+Transfer Learning Demo - Day 9
+================================
+
+Device: cpu
+Model: ResNet18
+Weights: ImageNet pretrained
+
+Strategy:
+- Freeze pretrained backbone
+- Replace final classifier
+- Train new classifier
+- Unfreeze layer4 later
+- Fine-tune with a small learning rate
+
+Total parameters: 11178564
+Trainable parameters: 2052
+
+Input shape: (1, 3, 224, 224)
+Output shape: (1, 4)
+Number of classes: 4
