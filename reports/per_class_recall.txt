@@ -1,0 +1,11 @@
+Per-Class Recall - Day 8
+========================
+
+Class 0: 0.9500
+Class 1: 0.9100
+Class 2: 0.8000
+Class 3: 0.9550
+
+Overall metrics:
+Accuracy: 0.9038
+Macro Recall: 0.9038

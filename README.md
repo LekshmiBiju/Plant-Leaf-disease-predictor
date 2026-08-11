@@ -87,3 +87,31 @@ The following transformations were used for training:
 Validation data uses only deterministic resizing and normalization to provide a consistent evaluation.
 
 These transformations are appropriate for plant leaf disease images because they change the appearance or orientation of the image without changing the underlying disease label.
+
+## Day 8 — Class Imbalance Handling
+
+The class distribution of the training dataset was analyzed and
+saved in `reports/class_balance.csv`.
+
+To reduce the effect of class imbalance, a
+`WeightedRandomSampler` was used during CNN training. This gives
+higher sampling probability to classes with fewer training samples.
+
+### Before vs After Balancing
+
+| Metric | Before Balancing | After Balancing |
+|---|---:|---:|
+| Validation Accuracy | 87.25% | 91.50% |
+
+The baseline validation accuracy before balancing was 87.25%.
+The value after balancing was obtained from the Day 8 training run.
+
+Per-class recall was also calculated on the validation dataset and
+saved in `reports/per_class_recall.txt`.
+
+### Evaluation
+
+The purpose of comparing the two runs is to determine whether
+weighted sampling improves the performance of underrepresented
+classes, particularly their recall, rather than relying only on
+overall validation accuracy.

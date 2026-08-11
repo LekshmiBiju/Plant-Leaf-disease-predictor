@@ -1,9 +1,27 @@
 Plant Leaf Disease Predictor
 ============================
 
+Class imbalance handling:
+WeightedRandomSampler
+
 Device: cpu
 Training images: 3200
 Validation images: 800
-Best validation loss: 0.3584
-Epochs completed: 19
-Best validation accuracy: 0.8725
+Best validation loss: 0.2573
+Epochs completed: 25
+Best validation accuracy after balancing: 0.9150
+
+Class distribution:
+Class 0: 800
+Class 1: 800
+Class 2: 800
+Class 3: 800
+
+Class weights:
+Class 0: 0.001250
+Class 1: 0.001250
+Class 2: 0.001250
+Class 3: 0.001250
+
+Day 7 baseline validation accuracy before balancing: 0.8725
+Day 8 validation accuracy after balancing: 0.9150

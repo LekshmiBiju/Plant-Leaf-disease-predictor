@@ -1,15 +1,17 @@
-from transforms import train_transform,val_transform
+from transforms import train_transform, val_transform
 import copy
 from pathlib import Path
+import csv
+from collections import Counter
 
 import torch
 import torch.nn as nn
 import torch.optim as optim
 import matplotlib.pyplot as plt
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, WeightedRandomSampler
 from tqdm import tqdm
 
-from dataset import LeafDiseaseDataset, transform
+from dataset import LeafDiseaseDataset
 from model import LeafDiseaseCNN
 
 
@@ -38,15 +40,108 @@ val_ds = LeafDiseaseDataset(
     transform=val_transform
 )
 
+print("Training images:", len(train_ds))
+print("Validation images:", len(val_ds))
+
 
 # --------------------------------------------------
-# 3. DATALOADERS
+# 3. CLASS DISTRIBUTION
 # --------------------------------------------------
+
+# Get labels from training dataset
+labels = [label for _, label in train_ds.samples]
+
+# Count images in each class
+class_counts = Counter(labels)
+
+print("\nClass distribution:")
+
+for class_id, count in sorted(class_counts.items()):
+    print(f"Class {class_id}: {count} images")
+
+
+# --------------------------------------------------
+# 4. SAVE CLASS BALANCE CSV
+# --------------------------------------------------
+
+Path("reports").mkdir(exist_ok=True)
+
+with open(
+    "reports/class_balance.csv",
+    "w",
+    newline=""
+) as f:
+
+    writer = csv.writer(f)
+
+    writer.writerow([
+        "class",
+        "count"
+    ])
+
+    for class_id, count in sorted(class_counts.items()):
+        writer.writerow([
+            class_id,
+            count
+        ])
+
+print(
+    "\nClass distribution saved to "
+    "reports/class_balance.csv"
+)
+
+
+# --------------------------------------------------
+# 5. CALCULATE CLASS WEIGHTS
+# --------------------------------------------------
+
+# Minority classes get larger weights
+class_weights = {
+    class_id: 1.0 / count
+    for class_id, count in class_counts.items()
+}
+
+print("\nClass weights:")
+
+for class_id, weight in sorted(class_weights.items()):
+    print(
+        f"Class {class_id}: "
+        f"{weight:.6f}"
+    )
+
+
+# --------------------------------------------------
+# 6. CALCULATE SAMPLE WEIGHTS
+# --------------------------------------------------
+
+sample_weights = [
+    class_weights[label]
+    for label in labels
+]
+
+
+# --------------------------------------------------
+# 7. WEIGHTED RANDOM SAMPLER
+# --------------------------------------------------
+
+sampler = WeightedRandomSampler(
+    weights=sample_weights,
+    num_samples=len(sample_weights),
+    replacement=True
+)
+
+
+# --------------------------------------------------
+# 8. DATALOADERS
+# --------------------------------------------------
+
+# IMPORTANT:
+# Do not use shuffle=True when using sampler.
 
 train_loader = DataLoader(
     train_ds,
     batch_size=32,
-    shuffle=True,
+    sampler=sampler,
     num_workers=0
 )
 
@@ -58,26 +153,25 @@ val_loader = DataLoader(
 )
 
 
-print("Training images:", len(train_ds))
-print("Validation images:", len(val_ds))
-
-
 # --------------------------------------------------
-# 4. MODEL
+# 9. MODEL
 # --------------------------------------------------
 
 model = LeafDiseaseCNN().to(device)
 
 
 # --------------------------------------------------
-# 5. LOSS FUNCTION
+# 10. LOSS FUNCTION
 # --------------------------------------------------
+
+# We are using WeightedRandomSampler,
+# so normal CrossEntropyLoss is sufficient.
 
 criterion = nn.CrossEntropyLoss()
 
 
 # --------------------------------------------------
-# 6. OPTIMIZER
+# 11. OPTIMIZER
 # --------------------------------------------------
 
 optimizer = optim.Adam(
@@ -87,7 +181,7 @@ optimizer = optim.Adam(
 
 
 # --------------------------------------------------
-# 7. TRAINING FUNCTION
+# 12. TRAINING FUNCTION
 # --------------------------------------------------
 
 def train_one_epoch(
@@ -97,6 +191,7 @@ def train_one_epoch(
     optimizer,
     device
 ):
+
     model.train()
 
     total_loss = 0.0
@@ -117,23 +212,30 @@ def train_one_epoch(
         logits = model(images)
 
         # Calculate loss
-        loss = criterion(logits, labels)
+        loss = criterion(
+            logits,
+            labels
+        )
 
         # Backpropagation
         loss.backward()
 
-        # Update weights
+        # Update model weights
         optimizer.step()
 
         # Accumulate loss
-        total_loss += loss.item() * images.size(0)
+        total_loss += (
+            loss.item() *
+            images.size(0)
+        )
+
         total_samples += images.size(0)
 
     return total_loss / total_samples
 
 
 # --------------------------------------------------
-# 8. VALIDATION FUNCTION
+# 13. VALIDATION FUNCTION
 # --------------------------------------------------
 
 @torch.no_grad()
@@ -143,6 +245,7 @@ def validate(
     criterion,
     device
 ):
+
     model.eval()
 
     total_loss = 0.0
@@ -158,14 +261,22 @@ def validate(
         logits = model(images)
 
         # Validation loss
-        loss = criterion(logits, labels)
+        loss = criterion(
+            logits,
+            labels
+        )
 
-        total_loss += loss.item() * images.size(0)
+        total_loss += (
+            loss.item() *
+            images.size(0)
+        )
 
         # Predicted class
-        predictions = logits.argmax(dim=1)
+        predictions = logits.argmax(
+            dim=1
+        )
 
-        # Number of correct predictions
+        # Correct predictions
         correct += (
             predictions == labels
         ).sum().item()
@@ -173,13 +284,14 @@ def validate(
         total += labels.size(0)
 
     avg_loss = total_loss / total
+
     accuracy = correct / total
 
     return avg_loss, accuracy
 
 
 # --------------------------------------------------
-# 9. TRAINING SETTINGS
+# 14. TRAINING SETTINGS
 # --------------------------------------------------
 
 num_epochs = 25
@@ -200,7 +312,7 @@ val_accuracies = []
 
 
 # --------------------------------------------------
-# 10. CREATE MODEL FOLDER
+# 15. CREATE FOLDERS
 # --------------------------------------------------
 
 Path("models").mkdir(
@@ -213,16 +325,22 @@ Path("reports").mkdir(
 
 
 # --------------------------------------------------
-# 11. TRAINING LOOP
+# 16. TRAINING LOOP
 # --------------------------------------------------
 
-for epoch in range(1, num_epochs + 1):
+for epoch in range(
+    1,
+    num_epochs + 1
+):
 
     print(
         f"\nEpoch {epoch}/{num_epochs}"
     )
 
+    # -------------------------
     # Train
+    # -------------------------
+
     train_loss = train_one_epoch(
         model,
         train_loader,
@@ -231,7 +349,10 @@ for epoch in range(1, num_epochs + 1):
         device
     )
 
+    # -------------------------
     # Validate
+    # -------------------------
+
     val_loss, val_acc = validate(
         model,
         val_loader,
@@ -239,12 +360,21 @@ for epoch in range(1, num_epochs + 1):
         device
     )
 
+    # -------------------------
     # Store metrics
-    train_losses.append(train_loss)
+    # -------------------------
 
-    val_losses.append(val_loss)
+    train_losses.append(
+        train_loss
+    )
 
-    val_accuracies.append(val_acc)
+    val_losses.append(
+        val_loss
+    )
+
+    val_accuracies.append(
+        val_acc
+    )
 
     print(
         f"Epoch {epoch}: "
@@ -255,23 +385,25 @@ for epoch in range(1, num_epochs + 1):
 
 
     # --------------------------------------------------
-    # 12. CHECK FOR BEST MODEL
+    # 17. CHECK FOR BEST MODEL
     # --------------------------------------------------
 
     if val_loss < best_val_loss:
 
-        print("New best validation loss!")
+        print(
+            "New best validation loss!"
+        )
 
         best_val_loss = val_loss
 
         wait = 0
 
-        # Save a copy of the best weights
+        # Save a copy of best weights
         best_weights = copy.deepcopy(
             model.state_dict()
         )
 
-        # Save best checkpoint
+        # Save checkpoint
         torch.save(
             model.state_dict(),
             "models/leaf_cnn_best.pth"
@@ -283,12 +415,13 @@ for epoch in range(1, num_epochs + 1):
 
         print(
             f"No improvement. "
-            f"Patience: {wait}/{patience}"
+            f"Patience: "
+            f"{wait}/{patience}"
         )
 
 
     # --------------------------------------------------
-    # 13. EARLY STOPPING
+    # 18. EARLY STOPPING
     # --------------------------------------------------
 
     if wait >= patience:
@@ -301,7 +434,7 @@ for epoch in range(1, num_epochs + 1):
 
 
 # --------------------------------------------------
-# 14. RESTORE BEST MODEL
+# 19. RESTORE BEST MODEL
 # --------------------------------------------------
 
 if best_weights is not None:
@@ -316,7 +449,7 @@ if best_weights is not None:
 
 
 # --------------------------------------------------
-# 15. SAVE FINAL BEST MODEL
+# 20. SAVE FINAL BEST MODEL
 # --------------------------------------------------
 
 torch.save(
@@ -331,10 +464,12 @@ print(
 
 
 # --------------------------------------------------
-# 16. PLOT TRAINING AND VALIDATION LOSS
+# 21. PLOT TRAINING AND VALIDATION LOSS
 # --------------------------------------------------
 
-plt.figure(figsize=(8, 5))
+plt.figure(
+    figsize=(8, 5)
+)
 
 plt.plot(
     train_losses,
@@ -351,7 +486,8 @@ plt.xlabel("Epoch")
 plt.ylabel("Loss")
 
 plt.title(
-    "Training and Validation Loss"
+    "Training and Validation Loss "
+    "(Weighted Sampling)"
 )
 
 plt.legend()
@@ -366,7 +502,6 @@ plt.savefig(
 
 plt.close()
 
-
 print(
     "Loss curve saved to "
     "reports/training_curves.png"
@@ -374,7 +509,7 @@ print(
 
 
 # --------------------------------------------------
-# 17. SAVE TRAINING LOG
+# 22. SAVE TRAINING LOG
 # --------------------------------------------------
 
 with open(
@@ -382,19 +517,34 @@ with open(
     "w"
 ) as f:
 
-    f.write("Plant Leaf Disease Predictor\n")
-    f.write("============================\n\n")
+    f.write(
+        "Plant Leaf Disease Predictor\n"
+    )
+
+    f.write(
+        "============================\n\n"
+    )
+
+    f.write(
+        "Class imbalance handling:\n"
+    )
+
+    f.write(
+        "WeightedRandomSampler\n\n"
+    )
 
     f.write(
         f"Device: {device}\n"
     )
 
     f.write(
-        f"Training images: {len(train_ds)}\n"
+        f"Training images: "
+        f"{len(train_ds)}\n"
     )
 
     f.write(
-        f"Validation images: {len(val_ds)}\n"
+        f"Validation images: "
+        f"{len(val_ds)}\n"
     )
 
     f.write(
@@ -408,8 +558,54 @@ with open(
     )
 
     if val_accuracies:
+
+        best_accuracy = max(
+            val_accuracies
+        )
+
         f.write(
-            f"Best validation accuracy: "
+            f"Best validation accuracy "
+            f"after balancing: "
+            f"{best_accuracy:.4f}\n"
+        )
+
+    f.write(
+        "\nClass distribution:\n"
+    )
+
+    for class_id, count in sorted(
+        class_counts.items()
+    ):
+
+        f.write(
+            f"Class {class_id}: "
+            f"{count}\n"
+        )
+
+    f.write(
+        "\nClass weights:\n"
+    )
+
+    for class_id, weight in sorted(
+        class_weights.items()
+    ):
+
+        f.write(
+            f"Class {class_id}: "
+            f"{weight:.6f}\n"
+        )
+
+    f.write(
+        "\nDay 7 baseline validation "
+        "accuracy before balancing: "
+        "0.8725\n"
+    )
+
+    if val_accuracies:
+
+        f.write(
+            f"Day 8 validation accuracy "
+            f"after balancing: "
             f"{max(val_accuracies):.4f}\n"
         )
 
