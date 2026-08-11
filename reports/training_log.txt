@@ -4,6 +4,6 @@ Plant Leaf Disease Predictor
 Device: cpu
 Training images: 3200
 Validation images: 800
-Best validation loss: 0.1847
-Epochs completed: 31
-Best validation accuracy: 0.9400
+Best validation loss: 0.3584
+Epochs completed: 19
+Best validation accuracy: 0.8725

@@ -53,6 +53,24 @@ The CNN was trained using an 80/20 train-validation split.
 - Device: CPU
 - Early stopping patience: 3 epochs
 - Epochs completed: 31
-- Best validation accuracy: 0.9400
+- Best validation accuracy: 0.8725
 - Best model: `models/leaf_cnn_best.pth`
 - Training curves: `reports/training_curves.png`
+
+## Data Augmentation
+
+Data augmentation was introduced using torchvision.transforms.
+
+Training images were augmented using random resized cropping,
+horizontal flipping, rotation, and moderate color changes.
+
+Validation images were not randomly augmented so that validation
+performance remained consistent.
+
+The augmentation visualization is available at:
+
+`reports/augmentation_samples.png`
+
+The training and validation results are available at:
+
+`reports/training_curves.png`

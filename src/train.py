@@ -1,3 +1,4 @@
+from transforms import train_transform,val_transform
 import copy
 from pathlib import Path
 
@@ -29,12 +30,12 @@ print("Device:", device)
 
 train_ds = LeafDiseaseDataset(
     "data/train",
-    transform=transform
+    transform=train_transform
 )
 
 val_ds = LeafDiseaseDataset(
     "data/val",
-    transform=transform
+    transform=val_transform
 )
 
 
@@ -181,7 +182,7 @@ def validate(
 # 9. TRAINING SETTINGS
 # --------------------------------------------------
 
-num_epochs = 50
+num_epochs = 25
 
 patience = 3
 
