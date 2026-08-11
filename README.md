@@ -74,3 +74,16 @@ The augmentation visualization is available at:
 The training and validation results are available at:
 
 `reports/training_curves.png`
+
+## Label-Safe Data Augmentation
+
+The following transformations were used for training:
+
+- RandomHorizontalFlip: Label-safe because flipping a leaf horizontally does not change the disease category.
+- RandomRotation: Small rotations are label-safe because the disease symptoms remain unchanged when the leaf is viewed at a different orientation.
+- RandomResizedCrop: Label-safe when the crop still contains sufficient leaf and disease information.
+- ColorJitter: Small changes in brightness, contrast, and saturation are label-safe because they simulate different lighting conditions while preserving disease patterns.
+
+Validation data uses only deterministic resizing and normalization to provide a consistent evaluation.
+
+These transformations are appropriate for plant leaf disease images because they change the appearance or orientation of the image without changing the underlying disease label.
