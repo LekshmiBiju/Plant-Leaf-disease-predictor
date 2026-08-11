@@ -115,3 +115,35 @@ The purpose of comparing the two runs is to determine whether
 weighted sampling improves the performance of underrepresented
 classes, particularly their recall, rather than relying only on
 overall validation accuracy.
+
+## Task 4 — ResNet18 Transfer Learning
+
+A pretrained ResNet18 model was fine-tuned for the four plant leaf
+disease classes.
+
+### Transfer Learning Strategy
+
+1. The pretrained ResNet18 backbone was initially frozen.
+2. The final fully connected layer was replaced with a 4-class classifier.
+3. The classifier was trained while the backbone remained frozen.
+4. The `layer4` block was then unfrozen for fine-tuning.
+5. A smaller learning rate was used during fine-tuning.
+6. The best model weights were saved as `models/resnet18_best.pth`.
+
+### Metrics Comparison
+
+| Model | Validation Accuracy |
+|---|---:|
+| Task 3 CNN Baseline | 87.25% |
+| ResNet18 Transfer Learning | 97.38% |
+
+ResNet18 achieved 97.38% validation accuracy, exceeding the
+baseline CNN accuracy of 87.25% by 10.13 percentage points.
+
+### Training Details
+
+- Device: CPU
+- Training images: 3200
+- Validation images: 800
+- Best validation accuracy: 97.38%
+- Best model: `models/resnet18_best.pth`

@@ -1,0 +1,12 @@
+ResNet18 Transfer Learning
+===========================
+
+Device: cpu
+Training images: 3200
+Validation images: 800
+Strategy: Freeze backbone, train classifier, then unfreeze layer4 for fine-tuning.
+Best validation accuracy: 0.9738
+Baseline CNN accuracy: 0.8725
+Meets baseline: True
+
+Best model: models/resnet18_best.pth
