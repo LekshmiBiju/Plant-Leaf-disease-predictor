@@ -1,0 +1,21 @@
+ResNet18 Fine-Tuning Report
+===========================
+
+Device: cpu
+Training images: 3200
+Validation images: 800
+
+Phase 1: Frozen backbone, classifier training
+Phase 1 epochs: 5
+Phase 1 learning rate: 0.001
+
+Phase 2: Unfreeze layer4 and fine-tune
+Phase 2 epochs: 10
+Layer4 learning rate: 1e-05
+
+Best validation accuracy: 0.9750
+Baseline CNN accuracy: 0.8725
+Meets baseline: True
+Best phase: phase2
+Best epoch: 10
+Training time: 78.01 minutes

@@ -147,3 +147,29 @@ baseline CNN accuracy of 87.25% by 10.13 percentage points.
 - Validation images: 800
 - Best validation accuracy: 97.38%
 - Best model: `models/resnet18_best.pth`
+
+## ResNet18 Fine-Tuning
+
+A pretrained ImageNet ResNet18 model was fine-tuned for the four
+plant leaf disease classes.
+
+Training used a two-phase strategy:
+
+1. The pretrained backbone was frozen and the new classifier head
+   was trained using Adam with learning rate 1e-3.
+2. The `layer4` block was unfrozen and fine-tuned together with the
+   classifier. A smaller learning rate of 1e-5 was used for `layer4`.
+
+Baseline CNN validation accuracy: 87.25%.
+
+Best ResNet18 validation accuracy: 97.50%.
+
+Hardware: CPU.
+
+Training time: 78.01 minutes.
+
+Best checkpoint:
+`models/resnet18_leaf_best.pth`
+
+Class mapping:
+`models/class_names.json`
