@@ -173,3 +173,20 @@ Best checkpoint:
 
 Class mapping:
 `models/class_names.json`
+
+## ResNet18 vs MobileNetV2
+
+| Model | Validation Accuracy | Model Size | CPU Latency |
+|---|---:|---:|---:|
+| ResNet18 | 97.38% | 42.72 MB MB | 18.40 ms/image |
+| MobileNetV2 | 95.00% | 8.74 MB | 38.47 ms/image |
+
+## Edge vs Server Deployment
+
+ResNet18 provides higher classification accuracy but has a larger model
+and higher computational cost. MobileNetV2 is designed for resource-
+constrained devices and provides a smaller model with lower CPU inference
+latency. Therefore, MobileNetV2 is more suitable for edge deployment on
+camera nodes or low-power devices, while ResNet18 is more suitable for
+server-side deployment where computational resources are available and
+maximum accuracy is preferred.
