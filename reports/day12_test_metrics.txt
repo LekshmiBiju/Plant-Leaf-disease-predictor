@@ -1,0 +1,11 @@
+Day 12 ResNet18 Test Evaluation
+===============================
+
+Device: cpu
+Test images: 400
+Correct predictions: 398
+Incorrect predictions: 2
+Test accuracy: 0.9950
+Test accuracy percentage: 99.50%
+
+Model: models/resnet18_day12_best.pth

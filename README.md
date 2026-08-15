@@ -190,3 +190,67 @@ latency. Therefore, MobileNetV2 is more suitable for edge deployment on
 camera nodes or low-power devices, while ResNet18 is more suitable for
 server-side deployment where computational resources are available and
 maximum accuracy is preferred.
+
+## Confusion Matrix & Classification Metrics
+
+### Objective
+
+Evaluate the best ResNet18 model on a completely held-out test set and analyze its classification performance using a confusion matrix, per-class accuracy, and misclassification analysis.
+
+### Test Set
+
+The Day 12 evaluation was performed on the held-out test set located at:
+
+`data/day12/test`
+
+The test set contains 400 images across four leaf disease classes:
+
+- Healthy
+- Early Blight
+- Late Blight
+- Leaf Mold
+
+The test set was not used during model training or validation, preventing training-data leakage.
+
+### Model
+
+The best Day 12 ResNet18 checkpoint was used:
+
+`models/resnet18_day12_best.pth`
+
+The model was evaluated on CPU.
+
+### Test Results
+
+| Metric | Result |
+|---|---:|
+| Test Images | 400 |
+| Correct Predictions | 398 |
+| Incorrect Predictions | 2 |
+| Test Accuracy | 99.50% |
+
+### Per-Class Accuracy
+
+| Class | Accuracy |
+|---|---:|
+| Healthy | 100.00% |
+| Early Blight | 100.00% |
+| Late Blight | 99.00% |
+| Leaf Mold | 99.00% |
+
+### Confusion Matrix
+
+The confusion matrix was generated using the held-out test set and saved as:
+
+`reports/confusion_matrix_day12.png`
+
+The matrix showed:
+
+
+              Predicted
+             Healthy  Early  Late  Mold
+
+Healthy         100      0     0     0
+Early             0    100     0     0
+Late              0      1    99     0
+Mold              0      1     0    99

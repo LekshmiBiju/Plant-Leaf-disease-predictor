@@ -1,0 +1,14 @@
+ResNet18 Day 12 Transfer Learning
+=================================
+
+Device: cpu
+Training images: 2800
+Validation images: 800
+Strategy: Freeze backbone, train classifier, then unfreeze layer4 for fine-tuning.
+Phase 1 epochs: 10
+Phase 2 epochs: 5
+Best validation accuracy: 0.9625
+Baseline CNN accuracy: 0.8725
+Meets baseline: True
+
+Best model: models/resnet18_day12_best.pth
