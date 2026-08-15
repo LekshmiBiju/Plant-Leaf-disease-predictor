@@ -254,3 +254,29 @@ Healthy         100      0     0     0
 Early             0    100     0     0
 Late              0      1    99     0
 Mold              0      1     0    99
+
+### Results
+
+- Test images: 400
+- Correct predictions: 398
+- Incorrect predictions: 2
+- Test accuracy: 99.50%
+
+### Error Analysis
+
+Two genuine misclassified samples were identified:
+
+1. Late Blight → Early Blight
+2. Leaf Mold → Early Blight
+
+The misclassified samples are stored in:
+
+`reports/errors/`
+
+A misclassification gallery was also generated and saved as:
+
+`reports/day12_misclassification_gallery.png`
+
+Only two genuine errors were found because the model correctly classified
+398 of the 400 test images. Additional samples were not artificially
+classified as errors.
