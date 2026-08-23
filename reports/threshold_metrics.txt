@@ -1,0 +1,9 @@
+ Threshold Tuning
+=======================
+
+Chosen threshold: 0.9829
+Precision: 1.0000
+Recall: 1.0000
+Average Precision: 1.0000
+
+Target: recall >= 0.95 and precision >= 0.80

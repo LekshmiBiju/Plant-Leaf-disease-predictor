@@ -1,0 +1,15 @@
+{
+    "model": "resnet18_day12_best.pth",
+    "task": "healthy_vs_diseased",
+    "healthy_class": "healthy",
+    "disease_classes": [
+        "early_blight",
+        "late_blight",
+        "leaf_mold"
+    ],
+    "threshold": 0.9829407334327698,
+    "precision": 1.0,
+    "recall": 1.0,
+    "target_recall": 0.95,
+    "target_precision": 0.8
+}

@@ -1,0 +1,16 @@
+Day 13 - ResNet18 Classification Report
+=========================================
+
+              precision    recall  f1-score   support
+
+     healthy     1.0000    1.0000    1.0000       100
+early_blight     0.9804    1.0000    0.9901       100
+ late_blight     1.0000    0.9900    0.9950       100
+   leaf_mold     1.0000    0.9900    0.9950       100
+
+    accuracy                         0.9950       400
+   macro avg     0.9951    0.9950    0.9950       400
+weighted avg     0.9951    0.9950    0.9950       400
+
+Model: models/resnet18_day12_best.pth
+Test images: 400
