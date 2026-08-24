@@ -280,3 +280,33 @@ A misclassification gallery was also generated and saved as:
 Only two genuine errors were found because the model correctly classified
 398 of the 400 test images. Additional samples were not artificially
 classified as errors.
+
+## Standalone CLI Inference
+
+The trained plant leaf disease model can be used from the command line
+to classify a single leaf image.
+
+### Basic Usage
+
+```bash
+python src/predict.py --image samples/leaf.jpg
+
+python src/predict.py \
+    --image samples/leaf.jpg \
+    --model models/resnet18_leaf_best.pth \
+    --config models/inference_config.json
+
+    Plant Leaf Disease Prediction
+--------------------------------
+Image: samples\leaf.jpg
+Predicted class: early_blight
+Confidence: 0.9998
+Disease probability: 1.0000
+Threshold: 0.9829
+Is diseased: True
+
+Class probabilities:
+  healthy: 0.0000
+  early_blight: 0.9998
+  late_blight: 0.0000
+  leaf_mold: 0.0002
